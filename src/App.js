@@ -57,7 +57,7 @@ function App() {
 
         <div className="box-container">
           <img 
-            src="/box.png" 
+            src={`${process.env.PUBLIC_URL}/box.png`}
             alt="くじ引き箱" 
             className={`box-image ${isShaking ? 'shaking' : ''}`} 
           />
