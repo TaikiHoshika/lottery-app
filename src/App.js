@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -6,21 +6,34 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState(null);
   const [isShaking, setIsShaking] = useState(false);
+  const [drawnNumbers, setDrawnNumbers] = useState([]);
+  const [availableNumbers, setAvailableNumbers] = useState([]);
+
+  // maxNumberが変更されたら利用可能な番号リストを更新
+  useEffect(() => {
+    const numbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
+    setAvailableNumbers(numbers);
+    setDrawnNumbers([]);
+  }, [maxNumber]);
 
   const handleDraw = () => {
     if (maxNumber < 1) {
       alert('範囲は1以上の数字を入力してください');
       return;
     }
-    // 1から指定した範囲内でランダムな数字を生成（直前の数字を除く）
-    let randomNum;
-    if (maxNumber === 1) {
-      randomNum = 1;
-    } else {
-      do {
-        randomNum = Math.floor(Math.random() * maxNumber) + 1;
-      } while (randomNum === selectedNumber);
+    
+    // 未抽選の番号を取得
+    const remaining = availableNumbers.filter(num => !drawnNumbers.includes(num));
+    
+    if (remaining.length === 0) {
+      alert('全員抽選済みです。リセットボタンを押してください。');
+      return;
     }
+    
+    // 未抽選の番号からランダムに選択
+    const randomIndex = Math.floor(Math.random() * remaining.length);
+    const randomNum = remaining[randomIndex];
+    
     setSelectedNumber(randomNum);
     
     // 箱を揺らすアニメーション開始
@@ -31,6 +44,8 @@ function App() {
       setIsShaking(false);
       setTimeout(() => {
         setShowModal(true);
+        // 抽選済みリストに追加
+        setDrawnNumbers(prev => [...prev, randomNum]);
       }, 500);
     }, 1000);
   };
@@ -39,33 +54,70 @@ function App() {
     setShowModal(false);
   };
 
+  const handleReset = () => {
+    setDrawnNumbers([]);
+    setSelectedNumber(null);
+    setShowModal(false);
+  };
+
   return (
     <div className="App">
-      <div className="container">
-        <h1>くじ引きアプリ</h1>
-        
-        <div className="input-section">
-          <label htmlFor="maxNumber">範囲指定（1～）:</label>
-          <input
-            id="maxNumber"
-            type="number"
-            min="1"
-            value={maxNumber}
-            onChange={(e) => setMaxNumber(parseInt(e.target.value) || 1)}
-          />
+      <div className="main-container">
+        <div className="side-panel left-panel">
+          <h3>未抽選</h3>
+          <div className="number-list">
+            {availableNumbers
+              .filter(num => !drawnNumbers.includes(num))
+              .map(num => (
+                <div key={num} className="number-item available">
+                  {num}
+                </div>
+              ))}
+          </div>
         </div>
 
-        <div className="box-container">
-          <img 
-            src={`${process.env.PUBLIC_URL}/box.png`}
-            alt="くじ引き箱" 
-            className={`box-image ${isShaking ? 'shaking' : ''}`} 
-          />
+        <div className="container">
+          <h1>くじ引きアプリ</h1>
+          
+          <div className="input-section">
+            <label htmlFor="maxNumber">範囲指定（1～）:</label>
+            <input
+              id="maxNumber"
+              type="number"
+              min="1"
+              value={maxNumber}
+              onChange={(e) => setMaxNumber(parseInt(e.target.value) || 1)}
+            />
+          </div>
+
+          <div className="box-container">
+            <img 
+              src={`${process.env.PUBLIC_URL}/box.png`}
+              alt="くじ引き箱" 
+              className={`box-image ${isShaking ? 'shaking' : ''}`} 
+            />
+          </div>
+
+          <div className="button-group">
+            <button className="draw-button" onClick={handleDraw}>
+              抽選する
+            </button>
+            <button className="reset-button" onClick={handleReset}>
+              リセット
+            </button>
+          </div>
         </div>
 
-        <button className="draw-button" onClick={handleDraw}>
-          抽選する
-        </button>
+        <div className="side-panel right-panel">
+          <h3>抽選済み</h3>
+          <div className="number-list">
+            {drawnNumbers.map(num => (
+              <div key={num} className="number-item drawn">
+                {num}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {showModal && (

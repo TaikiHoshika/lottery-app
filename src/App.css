@@ -8,14 +8,78 @@
   overflow: hidden;
 }
 
+.main-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1400px;
+  height: 90vh;
+  align-items: stretch;
+}
+
+.side-panel {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-panel h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  text-align: center;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 10px;
+}
+
+.number-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.number-item {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.number-item.available {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+}
+
+.number-item.drawn {
+  background: #e0e0e0;
+  color: #666;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .container {
   background: white;
   border-radius: 20px;
   padding: 40px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   text-align: center;
-  max-width: 500px;
-  width: 100%;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 h1 {
@@ -103,6 +167,35 @@ h1 {
   transform: translateY(0);
 }
 
+.button-group {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.reset-button {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+}
+
+.reset-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+}
+
+.reset-button:active {
+  transform: translateY(0);
+}
+
 /* モーダルスタイル */
 .modal-overlay {
   position: fixed;
@@ -186,6 +279,22 @@ h1 {
 }
 
 /* レスポンシブデザイン */
+@media (max-width: 1200px) {
+  .main-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .side-panel {
+    max-width: 100%;
+    min-height: 150px;
+  }
+
+  .number-list {
+    justify-content: center;
+  }
+}
+
 @media (max-width: 600px) {
   .container {
     padding: 30px 20px;
@@ -201,5 +310,17 @@ h1 {
 
   .result-number {
     font-size: 4rem;
+  }
+
+  .number-item {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .draw-button,
+  .reset-button {
+    padding: 12px 30px;
+    font-size: 1.1rem;
   }
 }
